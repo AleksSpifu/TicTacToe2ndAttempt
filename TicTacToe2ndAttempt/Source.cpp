@@ -13,6 +13,7 @@ bool exiting = false;
 bool player2Exists = true;
 bool player1Turn = true;
 bool someoneWon = false;
+bool draw = false;
 std::string winner = "";
 
 
@@ -36,6 +37,11 @@ int main() {
 		drawBoard();
 		if (someoneWon == true) {
 			std::cout << "The winner is: " << winner << "!\n";
+			exiting = true;
+			break;
+		} 
+		else if (draw == true) {
+			std::cout << "It's a draw!";
 			exiting = true;
 			break;
 		}
@@ -160,7 +166,7 @@ void updateTileValue() {
 }
 
 void checkForWinsOrDraw() {
-	
+	int counter = 0;
 	int pointsPlayer1 = 0;
 	int pointsPlayer2 = 0;
 	//Check for horizontal wins
@@ -243,6 +249,16 @@ void checkForWinsOrDraw() {
 	}
 	pointsPlayer1 = 0;
 	pointsPlayer2 = 0;
+	for (int r = 0; r < board.size(); r++) {
+		for (int c = 0; c < board[r].size(); c++) {
+			if (board[r][c] != originalBoard[r][c]) {
+				counter++;
+			}
+		}
+	}
+	if (counter == 9) {
+		draw = true;
+	}
 }
 
 void AIMoves() {
@@ -332,7 +348,7 @@ void mainMenu() {
 
 void drawBoard() {
 	
-	//system("cls");
+	system("cls");
 	for (int row = 0; row < board.size(); row++) {
 		for (int col = 0; col < board[row].size(); col++) {
 			std::cout << " | " << board[row][col];
