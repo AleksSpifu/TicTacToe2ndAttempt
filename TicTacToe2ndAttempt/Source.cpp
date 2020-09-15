@@ -3,6 +3,7 @@
 #include <vector>
 
 void drawBoard();
+void AIMoves();
 void mainMenu();
 int getIntFromUser(int, int);
 void playerMove();
@@ -15,7 +16,7 @@ std::vector <std::vector <char>> board = {
 	{'1', '2', '3'},
 	{'4', '5', '6'},
 	{'7', '8', '9'} };
-std::vector <std::vector <char>> originalBoard = {
+const std::vector <const std::vector <char>> originalBoard = {
 	{'1', '2', '3'},
 	{'4', '5', '6'},
 	{'7', '8', '9'} };
@@ -29,19 +30,63 @@ int main() {
 	mainMenu();
 	while (exiting == false) {
 		drawBoard();
+		if (player2Exists == true && player1Turn == false) {
+			playerMove();
+		}
+		else if (player1Turn == true) {
+			playerMove();
+		}
+		else if (player1Turn == false && player2Exists == false) {
+			AIMoves();
+		}
+		
 	}
 	
 
 	return 0;
 }
 
+void AIMoves() {
+
+
+}
+
 void playerMove() {
+	char player;
+	int attemptRow;
+	int attemptCol;
 	bool moveAccepted = false;
 	int moveAttempt;
-	while (moveAccepted = false) {
+	while (moveAccepted == false) {
 		moveAttempt = getIntFromUser(1, 9);
-
+		if (moveAttempt > 6) {
+			attemptRow = 2;
+			attemptCol = moveAttempt - 7;
+		}
+		else if (moveAttempt <= 6 && moveAttempt > 3) {
+			attemptRow = 1;
+			attemptCol = moveAttempt - 4;
+		}
+		else if (moveAttempt <= 3 && moveAttempt > 0) {
+			attemptRow = 0;
+			attemptCol = moveAttempt - 1;
+		}
+		if (board[attemptRow][attemptCol] == originalBoard[attemptRow][attemptCol]) {
+			moveAccepted = true;
+		}
+		else {
+			std::cout << "Please choose a tile that's not already occupied.\n";
+		}
 	}
+	if (player1Turn == true) {
+		player = 'X';
+	}
+	else
+	{
+		player = 'O';
+	}
+	board[attemptRow][attemptCol] = player;
+	player1Turn = !player1Turn;
 	
 
 }
@@ -72,12 +117,23 @@ void mainMenu() {
 }
 
 void drawBoard() {
+	
 	//system("cls");
 	for (int row = 0; row < board.size(); row++) {
 		for (int col = 0; col < board[row].size(); col++) {
 			std::cout << " | " << board[row][col];
 		}
 		std::cout << " | \n";
+	}
+	switch (player1Turn) {
+	case true:
+		std::cout << "It is X's turn to play.\n";
+		break;
+	case false:
+		std::cout << "It is O's turn to play.\n";
+		break;
+	default:
+		break;
 	}
 }
 
