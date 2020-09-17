@@ -17,25 +17,25 @@ bool draw = false;
 std::string winner = "";
 
 
-std::vector <std::vector <char>> board = {
+std::vector <std::vector <char>> board = { //This is what gets printed out and shown to the player.
 	{'1', '2', '3'},
 	{'4', '5', '6'},
 	{'7', '8', '9'} };
-std::vector <std::vector <char>> originalBoard = {
+std::vector <std::vector <char>> originalBoard = { //This is so i can check wether or not a given tile has been taken or not. If "board" matches "originalBoard", i know the tile is empty.
 	{'1', '2', '3'},
 	{'4', '5', '6'},
 	{'7', '8', '9'} };
-std::vector <std::vector <int>> tileValue = {
+std::vector <std::vector <int>> tileValue = { //This is the priority system of the AI. Can be changed to suit different playstyles.
 	{5, 3, 5},
 	{3, 10, 3},
 	{5, 3, 5} };
 
 
 int main() {
-	mainMenu();
-	while (exiting == false) {
-		drawBoard();
-		if (someoneWon == true) {
+	mainMenu(); //Ask if player 1 wants to play against AI or player 2, who starts and
+	while (exiting == false) { //if the player chooses to exit in the menu, this will not happen.
+		drawBoard(); //Print out the board
+		if (someoneWon == true) { //These are pretty self-explanatory. They just exit if someone wins or if it's a draw.
 			std::cout << "The winner is: " << winner << "!\n";
 			exiting = true;
 			break;
@@ -45,19 +45,19 @@ int main() {
 			exiting = true;
 			break;
 		}
-		if (player2Exists == true && player1Turn == false) {
+		if (player2Exists == true && player1Turn == false) { //If it's player VS player and player 2 is up, a move from the player is required.
+			playerMove(); //This will check whose turn it is.
+		}
+		else if (player1Turn == true) { //Else, regardless of wether or not it's against AI or Player, player 1 is always a player, and has to move
 			playerMove();
 		}
-		else if (player1Turn == true) {
-			playerMove();
-		}
-		else if (player1Turn == false && player2Exists == false) {
+		else if (player1Turn == false && player2Exists == false) { //If it's player 2's turn and player 2 is the AI, call for the AI move function
 			AIMoves();
 		}
-		updateTileValue();
-		checkForWinsOrDraw();
+		updateTileValue(); //After this, the AI priority system will check for any piece with 2 in a row, and update the value of the remaining one to increase the chance of it being selected.
+		checkForWinsOrDraw(); //also pretty self explanatory.
 		
-		player1Turn = !player1Turn;
+		player1Turn = !player1Turn; //Switch whose turn it is.
 	}
 	
 
@@ -76,23 +76,18 @@ void updateTileValue() {
 			if (board[r][c] == 'O') {
 				
 				counterO++;
-				//std::cout << r << c << "is O, counter == " << counterO << "\n";
 			}
 			else if (board[r][c] == 'X') {
 				counterX++;
-				//std::cout << r << c << "is X, counter == " << counterX << "\n";
 			}
 			else {
 				lastEmptyRow = r;
 				lastEmptyCol = c;
-				//std::cout << r << c << "is empty\n";
 			}
 
 		}
 		if ((counterX == 2 || counterO == 2) && (counterX + counterO) == 2) {
-			//std::cout << "Horizontal Changing value " << tileValue[lastEmptyRow][lastEmptyCol] << "to ";
 			tileValue[lastEmptyRow][lastEmptyCol] = tileValue[lastEmptyRow][lastEmptyCol] * 10;
-			//std::cout << tileValue[lastEmptyRow][lastEmptyCol] << "\n";
 		}
 		counterX = 0;
 		counterO = 0;
@@ -113,14 +108,12 @@ void updateTileValue() {
 
 		}
 		if ((counterX == 2 || counterO == 2) && (counterX + counterO) == 2) {
-			//std::cout << "Vertical Changing value " << tileValue[lastEmptyRow][lastEmptyCol] << "to ";
 			tileValue[lastEmptyRow][lastEmptyCol] = tileValue[lastEmptyRow][lastEmptyCol] * 10;
-			//std::cout << tileValue[lastEmptyRow][lastEmptyCol] << "\n";
 		}
 		counterX = 0;
 		counterO = 0;
 	}
-
+	//The folowing two checks diagonally
 	for (int i = 0; i < board.size(); i++) {
 		if (board[i][i] == 'O') {
 			counterO++;
@@ -133,13 +126,9 @@ void updateTileValue() {
 			lastEmptyCol = i;
 
 		}
-		
-
 	}
 	if ((counterX == 2 || counterO == 2) && (counterX + counterO) == 2) {
-		//std::cout << "Diagonal 1 Changing value " << tileValue[lastEmptyRow][lastEmptyCol] << "to ";
 		tileValue[lastEmptyRow][lastEmptyCol] = tileValue[lastEmptyRow][lastEmptyCol] * 10;
-		//std::cout << tileValue[lastEmptyRow][lastEmptyCol] << "\n";
 	}
 	counterX = 0;
 	counterO = 0;
@@ -157,9 +146,7 @@ void updateTileValue() {
 		}
 	}
 	if ((counterX == 2 || counterO == 2) && (counterX+counterO) == 2) {
-		//std::cout << "Diagonal 2 Changing value " << tileValue[lastEmptyRow][lastEmptyCol] << "to ";
 		tileValue[lastEmptyRow][lastEmptyCol] = tileValue[lastEmptyRow][lastEmptyCol] * 10;
-		//std::cout << tileValue[lastEmptyRow][lastEmptyCol] << "\n";
 	}
 	counterX = 0;
 	counterO = 0;
@@ -169,6 +156,7 @@ void checkForWinsOrDraw() {
 	int counter = 0;
 	int pointsPlayer1 = 0;
 	int pointsPlayer2 = 0;
+	//These check for 3 identical tiles in a row, and makes someonewon = true if thats the case.
 	//Check for horizontal wins
 	for (int r = 0; r < board.size(); r++) {
 		for (int c = 0; c < board[r].size(); c++) {
@@ -249,19 +237,27 @@ void checkForWinsOrDraw() {
 	}
 	pointsPlayer1 = 0;
 	pointsPlayer2 = 0;
-	for (int r = 0; r < board.size(); r++) {
-		for (int c = 0; c < board[r].size(); c++) {
-			if (board[r][c] != originalBoard[r][c]) {
-				counter++;
+	//if no one won, this checks all the tiles, and if all of them are taken, draw = true
+	if (someoneWon == false) {
+		for (int r = 0; r < board.size(); r++) {
+			for (int c = 0; c < board[r].size(); c++) {
+				if (board[r][c] != originalBoard[r][c]) {
+					counter++;
+				}
 			}
 		}
+		if (counter == 9) {
+			draw = true;
+		}
 	}
-	if (counter == 9) {
-		draw = true;
-	}
+	
 }
 
 void AIMoves() {
+	//This entire function simply searches from tile 1-9 and puts an O on the biggest value it finds. It will not switch if it finds an equal value,
+	//so if all tiles are equal it will select 1, 2, 3, and so on. I don't need to check if the tile is occupied already, because when a tile is occupied,
+	//it's value becomes 0, and instead of adding numbers to increase value, i use multiplication, so it will always stay 0,
+	//so the AI will never select it. Unless ALL the tiles are 0, but then, either someone wins or it's a draw, so it's not an issue.
 	int destinationRow;
 	int destinationCol;
 	int targetValue = 0;
@@ -271,7 +267,6 @@ void AIMoves() {
 				destinationCol = c;
 				destinationRow = r;
 				targetValue = tileValue[r][c];
-				std::cout << "Highest value found so far at " << r << c << "\n";
 			}
 		}
 	}
@@ -281,13 +276,16 @@ void AIMoves() {
 }
 
 void playerMove() {
+	//this function is pretty straight forward, it pretty much asks the currently active player to select a number, and checks if it's a valid move.
 	char player;
 	int attemptRow;
 	int attemptCol;
 	bool moveAccepted = false;
 	int moveAttempt;
-	while (moveAccepted == false) {
-		moveAttempt = getIntFromUser(1, 9);
+	while (moveAccepted == false) { //This will loop until the player enters a valid number.
+		moveAttempt = getIntFromUser(1, 9); //ask for input, the function will make sure an integer between 1 and 9 is entered, but will not check
+											//if the spot is taken. 
+		//Here it turns the single number into a row and column, to be used below to check if the tile is occupied.
 		if (moveAttempt > 6) {
 			attemptRow = 2;
 			attemptCol = moveAttempt - 7;
@@ -300,28 +298,30 @@ void playerMove() {
 			attemptRow = 0;
 			attemptCol = moveAttempt - 1;
 		}
+		//This is where the original board comes in handy, because if the tile is the same, that means it hasn't been used yet.
 		if (board[attemptRow][attemptCol] == originalBoard[attemptRow][attemptCol]) {
-			moveAccepted = true;
+			moveAccepted = true; //Accept the move and exit the while-loop
 		}
-		else {
+		else { //Or ask again if it's not accepted.
 			std::cout << "Please choose a tile that's not already occupied.\n";
 		}
 	}
-	if (player1Turn == true) {
+	if (player1Turn == true) { 
 		player = 'X';
 	}
 	else
 	{
 		player = 'O';
 	}
-	board[attemptRow][attemptCol] = player;
-	tileValue[attemptRow][attemptCol] = 0;
+	board[attemptRow][attemptCol] = player; //Replace the number with the correct letter.
+	tileValue[attemptRow][attemptCol] = 0; //Set the value of the tile to 0 so the AI will not try to move to it.
 	
 	
 
 }
 
 void mainMenu() {
+	//This function gets called when the program starts. it's pretty self-explanatory. 
 	system("cls");
 	std::cout << "Please select gamemode:\n1. Play against AI and you start.\n2. Play against AI and the AI starts.\n3. Play with someone locally.\n4. Exit.\n";
 	switch (getIntFromUser(1, 4))
@@ -347,14 +347,17 @@ void mainMenu() {
 }
 
 void drawBoard() {
-	
+	//This simply prints out the state of the board vector, and tells the player whose turn it is.
 	system("cls");
+	std::cout << "\n";
 	for (int row = 0; row < board.size(); row++) {
+		std::cout << "\t";
 		for (int col = 0; col < board[row].size(); col++) {
 			std::cout << " | " << board[row][col];
 		}
 		std::cout << " | \n";
 	}
+	std::cout << "\n";
 	switch (player1Turn) {
 	case true:
 		std::cout << "It is X's turn to play.\n";
@@ -368,6 +371,7 @@ void drawBoard() {
 }
 
 int getIntFromUser(int min, int max) {
+	//This is just an easier way to make sure only int values can be entered. there are probably better ways but this works for my purpose.
 	std::cout << "Please enter a number between " << min << " and " << max << ": \n";
 	int userinput;
 	std::cin >> userinput;
