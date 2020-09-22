@@ -150,6 +150,19 @@ void updateTileValue() {
 	}
 	counterX = 0;
 	counterO = 0;
+
+	if (board[0][0] == 'X' && board[2][2] == originalBoard[2][2]) {
+		tileValue[2][2] = tileValue[2][2] * 5;
+	} 
+	if (board[2][0] == 'X' && board[0][2] == originalBoard[0][2]) {
+		tileValue[0][2] = tileValue[0][2] * 5;
+	}
+	if (board[2][2] == 'X' && board[0][0] == originalBoard[0][0]) {
+		tileValue[0][0] = tileValue[0][0] * 5;
+	}
+	if (board[0][2] == 'X' && board[2][0] == originalBoard[2][0]) {
+		tileValue[2][0] = tileValue[2][0] * 5;
+	}
 }
 
 void checkForWinsOrDraw() {
@@ -348,7 +361,7 @@ void mainMenu() {
 
 void drawBoard() {
 	//This simply prints out the state of the board vector, and tells the player whose turn it is.
-	system("cls");
+	//system("cls");
 	std::cout << "\n";
 	for (int row = 0; row < board.size(); row++) {
 		std::cout << "\t";
